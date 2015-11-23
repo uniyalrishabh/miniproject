@@ -1,8 +1,8 @@
 #include<stdio.h>
-#include<string.h>
+ #include<string.h>
 void chk_label();
- void chk_opcode();
- void READ_LINE();
+void chk_opcode();
+void READ_LINE();
 struct optab
  {
      char   code[10],objcode[10];
@@ -21,16 +21,16 @@ struct optab
  int startaddr,locctr,symcount=0,length;
  char line[20],label[8],opcode[8],operand[8],programname[10];
 
- //                void PASS1()
+                 void PASS1()
                    {
                         FILE *input,*inter;
                         input=fopen("input.txt","r");
                         inter=fopen("inter.txt","w");
                          printf("LOCATION LABEL\tOPERAND\tOPCODE\n");
                          printf("_____________________________________");
-                         fgets(line,20,input);
+                         fscanf(input,"%s%s%s",label,opcode,operand);
 
-                       READ_LINE();
+
 
                       if(!strcmp(opcode,"START"))
                        {
@@ -67,3 +67,76 @@ struct optab
                      fclose(inter);
                      fclose(input);
                        }
+void PASS2()
+           {
+                 FILE *inter,*output;
+                 char record[30],part[6],value[5];
+                 int currtxtlen=0,foundopcode,foundoperand,chk,operandaddr,recaddr=0;
+                 inter=fopen("inter.txt","r");
+                 output=fopen("output.txt","w");
+                 fgets(line,20,inter);
+
+                 READ_LINE();
+                 if(!strcmp(opcode,"START")) fgets(line,20,inter);
+                printf("\n\nCorresponding Object code is..\n");
+                printf("\nH^ %s ^ %d ^ %d ",programname,startaddr,length);
+                fprintf(output,"\nH^ %s ^ %d ^ %d ",programname,startaddr,length);
+                recaddr=startaddr; record[0]='\0';
+                while(strcmp(line,"END")!=0)
+                           {
+                                              operandaddr=foundoperand=foundopcode=0;
+                                              value[0]=part[0]= '\0';
+                                             READ_LINE();
+            for(chk=0;chk<3;chk++)
+              {
+                if(!strcmp(opcode,myoptab[chk].code))
+                {
+                foundopcode=1;
+                strcpy(part,myoptab[chk].objcode);
+
+              if(operand[0]!='\0')
+              {
+              for(chk=0;chk<symcount;chk++)
+
+              if(!strcmp(mysymtab[chk].symbol,operand))
+              {
+              itoa(mysymtab[chk].addr,value,10);
+              strcat(part,value);
+              foundoperand=1;
+              }
+               if(!foundoperand)strcat(part,"err");
+               }
+               }
+               }
+                if(!foundopcode)
+                {
+                                if(strcmp(opcode,"BYTE")==0 || strcmp(opcode,"WORD")||strcmp(opcode,"RESB"))
+                                {strcat(part,operand);
+                               }}
+                if((currtxtlen+strlen(part))<=8)
+                {
+                 strcat(record,"^");
+                 strcat(record,part);
+
+                 currtxtlen+=strlen(part);
+                }
+                 else
+                 {
+                  printf("\nT^ %d ^%d %s",recaddr,currtxtlen,record);
+                  fprintf(output,"\nT^ %d ^%d %s",recaddr,currtxtlen,record);
+                  recaddr+=currtxtlen;
+                  currtxtlen=strlen(part);
+                  strcpy(record,part);
+
+
+
+                 }
+           fgets(line,20,inter);
+                 }
+                       printf("\nT^ %d ^%d %s",recaddr,currtxtlen,record);
+                       fprintf(output,"\nT^ %d ^%d %s",recaddr,currtxtlen,record);
+                       printf("\nE^ %d\n",startaddr);
+                       fprintf(output,"\nE^ %d\n",startaddr);
+                       fclose(inter);
+                       fclose(output);
+        }
