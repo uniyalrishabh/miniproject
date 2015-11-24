@@ -140,3 +140,30 @@ void PASS2()
                        fclose(inter);
                        fclose(output);
         }
+        void READ_LINE()
+        {
+             char buff[8],word1[8],word2[8],word3[8];
+             int i,j=0,count=0;
+              label[0]=opcode[0]=operand[0]=word1[0]=word2[0]=word3[0]='\0';
+                  for(i=0;line[i]!='\0';i++)
+                       {
+                    if(line[i]!=' ')buff[j++]=line[i];
+                    else
+                       {
+                      buff[j]='\0';
+                      strcpy(word3,word2);strcpy(word2,word1);strcpy(word1,buff);
+                      j=0;count++;
+                       }
+                       }
+                       buff[j-1]='\0';
+                       strcpy(word3,word2);
+                       strcpy(word2,word1);
+                       strcpy(word1,buff);
+                     switch(count)
+                        {
+                                     case 0:strcpy(opcode,word1);break;
+                                     case 1:{strcpy(opcode,word2);strcpy(operand,word1);}break;
+                                     case 2:{strcpy(label,word3);strcpy(opcode,word2);strcpy(operand,word1);}break;
+                        }
+                        }
+
